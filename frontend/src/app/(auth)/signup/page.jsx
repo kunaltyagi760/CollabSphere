@@ -124,7 +124,7 @@ const SignUpPage = () => {
                         varient={'contained'}
                         type="submit"
                         disabled={!validateForm()}
-                        color={'bg-slate-800'}
+                        color={'slate-800'}
                     >
                         Sign Up
                     </Button>

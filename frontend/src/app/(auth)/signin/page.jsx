@@ -99,7 +99,7 @@ const Page = () => {
                         varient={'contained'}
                         type="submit"
                         disabled={!validateForm()}
-                        color={'bg-slate-800'}
+                        color={'slate-800'}
                     >
                         Submit
                     </Button>
