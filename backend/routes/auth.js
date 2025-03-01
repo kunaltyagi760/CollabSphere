@@ -58,17 +58,32 @@ router.post("/forgot-password", async (req, res) => {
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
     });
 
-    const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
+    const resetLink = `${process.env.CLIENT_URL}/reset-password`; // Generic reset link
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Password Reset",
-      text: `Click this link to reset your password: ${resetLink} \nThis link will expire in 15 minutes.`,
+      subject: "Password Reset Request",
+      text: `
+Hello ${user.name},
+
+You have requested to reset your password.
+
+Click the link below to reset your password:
+${resetLink}
+
+Enter this token when prompted:
+${token}
+
+This token is valid for 15 minutes. If you did not request this, please ignore this email.
+
+Best regards,
+Your App Team
+      `,
     };
 
     await transporter.sendMail(mailOptions);
-    res.json({ message: "Password reset link sent to email!" });
+    res.json({ message: "Password reset token sent to email!" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -88,7 +103,7 @@ router.post("/reset-password", async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
-    res.json({ message: "Password reset successful! You can now log in with your new password." });
+    res.json({ message: "Password reset successful! You can now log in." });
   } catch (err) {
     res.status(400).json({ message: "Invalid or expired token" });
   }
