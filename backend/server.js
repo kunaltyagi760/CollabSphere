@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", require("./routes/auth"));
-// app.use("/api/user", require("./routes/user"));
+app.use("/api/user", require("./routes/userRoutes"));
 // app.use("/api/post", require("./routes/post"));
 app.use("/api/posts", require("./routes/postRoutes"));
 
