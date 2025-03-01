@@ -1,4 +1,5 @@
 import "./globals.css";
+import Wrappper from "./wrappper";
 
 export const metadata = {
 	title: "Create Next App",
@@ -9,7 +10,9 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
 			<body className="bg-slate-200">
-				{children}
+				<Wrappper>
+					{children}
+				</Wrappper>
 			</body>
 		</html>
 	);

@@ -1,49 +1,34 @@
 'use client'
+import { validateInput } from '@/common/utils'
 import Button from '@/components/Button/Button'
 import Input from '@/components/Input/Input'
+import Link from 'next/link'
 import { useState } from 'react'
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-const page = () => {
+const SignUpPage = () => {
     const [data, setData] = useState({
+        name: '',
         email: '',
         password: '',
-        rememberMe: false
+        confirmPassword: '',
+        agreeToTerms: false
     })
     const [errors, setErrors] = useState({
+        name: '',
         email: '',
-        password: ''
+        password: '',
+        confirmPassword: ''
     })
+    const [eyeOpen, setEyeOpen] = useState(false);
+    const toggleEye = () => setEyeOpen(!eyeOpen);
 
     const handleChange = (action, value) => {
         setData(prevData => ({
             ...prevData,
             [action]: value
         }))
-        validateInput(action, value) // Validate input on change
-    }
-
-    const validateInput = (field, value) => {
-        const newErrors = { ...errors }
-        
-        if (field === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!emailRegex.test(value)) {
-                newErrors.email = 'Please enter a valid email address.'
-            } else {
-                newErrors.email = '' // Clear error if valid
-            }
-        }
-
-        if (field === 'password') {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>_-]{8,}$/
-            if (!passwordRegex.test(value)) {
-                newErrors.password = 'Password must be at least 8 characters long and contain both letters, numbers, and special characters.'
-            } else {
-                newErrors.password = '' // Clear error if valid
-            }
-        }
-
-        setErrors(newErrors)
+        validateInput(action, value, errors, setErrors) // Validate input on change
     }
 
     const handleSubmit = async (e) => {
@@ -56,51 +41,101 @@ const page = () => {
     }
 
     const validateForm = () => {
-        // The form is valid if there are no errors for email and password
-        return !errors.email && !errors.password && data.email && data.password
+        // The form is valid if there are no errors and all fields are filled out
+        return !errors.name && !errors.email && !errors.password && !errors.confirmPassword && data.name && data.email && data.password && data.confirmPassword && data.password === data.confirmPassword
     }
 
-    const handleRememberMeChange = (e) => {
+    const handleAgreeToTermsChange = (e) => {
         setData(prevData => ({
             ...prevData,
-            rememberMe: e.target.checked
+            agreeToTerms: e.target.checked
         }))
     }
 
     return (
-        <div className='p-8'>
-            <form onSubmit={handleSubmit}>
-                <Input 
-                    type="email" 
-                    placeholder="Enter your email" 
-                    onChange={(e) => handleChange('email', e.target.value)} 
+        <div className='p-4 sm:p-8'>
+            <div className='text-center mb-8'>
+                <h3 className='font-semibold text-2xl'>Create Your Account</h3>
+                <p className='text-slate-500'>Please fill in the form to create a new account</p>
+            </div>
+
+            {/* <div>
+                <Button varient={'outlined'} color={'slate-700'}>
+                    Email Only
+                </Button>
+            </div> */}
+            {/* <p className='text-slate-500 text-center my-4'>or</p> */}
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                <Input
+                    type="text"
+                    placeholder="Enter your name"
+                    onChange={(e) => handleChange('name', e.target.value)}
+                    value={data.name}
+                    error={errors?.name}
+                />
+
+                <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    onChange={(e) => handleChange('email', e.target.value)}
                     value={data.email}
+                    error={errors?.email}
                 />
-                {errors.email && <div style={{ color: 'red' }}>{errors.email}</div>}
 
-                <Input 
-                    type="password" 
-                    placeholder="Enter your password" 
-                    onChange={(e) => handleChange('password', e.target.value)} 
+                <Input
+                    type={eyeOpen ? "text" : "password"}
+                    placeholder="Enter your password"
+                    onChange={(e) => handleChange('password', e.target.value)}
                     value={data.password}
+                    endIcon={eyeOpen ?
+                        <FaRegEyeSlash onClick={toggleEye} />
+                        :
+                        <FaRegEye onClick={toggleEye} />
+                    }
+                    error={errors?.password}
                 />
-                {errors.password && <div style={{ color: 'red' }}>{errors.password}</div>}
 
-                <div>
+                <Input
+                    type={eyeOpen ? "text" : "password"}
+                    placeholder="Confirm your password"
+                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                    value={data.confirmPassword}
+                    endIcon={eyeOpen ?
+                        <FaRegEyeSlash onClick={toggleEye} />
+                        :
+                        <FaRegEye onClick={toggleEye} />
+                    }
+                    error={errors?.confirmPassword}
+                />
+
+                <div className='flex items-center'>
                     <label>
-                        <input 
-                            type="checkbox" 
-                            checked={data.rememberMe} 
-                            onChange={handleRememberMeChange} 
+                        <input
+                            type="checkbox"
+                            checked={data.agreeToTerms}
+                            onChange={handleAgreeToTermsChange}
+                            className='mt-2'
                         />
-                        Remember me
+                        <span className='select-none'> I agree to the Terms and Conditions</span>
                     </label>
                 </div>
-
-                <Button type="submit" disabled={!validateForm()}>Submit</Button>
+                <div className='mt-8'>
+                    <Button
+                        varient={'contained'}
+                        type="submit"
+                        disabled={!validateForm()}
+                        color={'bg-slate-800'}
+                    >
+                        Sign Up
+                    </Button>
+                </div>
             </form>
+
+            <div className='text-center mt-16'>
+                <p className='text-slate-500'>Already have an account? <Link href='/signin' className='underline'>Login</Link></p>
+            </div>
         </div>
     )
 }
 
-export default page
+export default SignUpPage;

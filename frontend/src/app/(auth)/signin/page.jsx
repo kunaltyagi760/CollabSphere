@@ -1,4 +1,5 @@
 'use client'
+import { validateInput } from '@/common/utils'
 import Button from '@/components/Button/Button'
 import Input from '@/components/Input/Input'
 import Link from 'next/link'
@@ -22,32 +23,9 @@ const Page = () => {
             ...prevData,
             [action]: value
         }))
-        validateInput(action, value) // Validate input on change
+        validateInput(action, value, errors, setErrors) // Validate input on change
     }
 
-    const validateInput = (field, value) => {
-        const newErrors = { ...errors }
-
-        if (field === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            if (!emailRegex.test(value)) {
-                newErrors.email = 'Please enter a valid email address.'
-            } else {
-                newErrors.email = '' // Clear error if valid
-            }
-        }
-
-        if (field === 'password') {
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*(),.?":{}|<>_-]{8,}$/
-            if (!passwordRegex.test(value)) {
-                newErrors.password = 'Password must be at least 8 characters long and contain both letters, numbers, and special characters.'
-            } else {
-                newErrors.password = '' // Clear error if valid
-            }
-        }
-
-        setErrors(newErrors)
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -71,7 +49,7 @@ const Page = () => {
     }
 
     return (
-        <div className='p-8'>
+        <div className='p-4 sm:p-8'>
             <div className='text-center mb-8'>
                 <h3 className='font-semibold text-2xl'>Welcome Back!</h3>
                 <p className='text-slate-500'>Please sign-in to your account</p>
@@ -91,7 +69,6 @@ const Page = () => {
                     value={data.email}
                     error={errors?.email}
                 />
-                {/* {errors.email && <div style={{ color: 'red' }}>{errors.email}</div>} */}
 
                 <Input
                     type={eyeOpen ? "text" : "password"}
@@ -105,7 +82,6 @@ const Page = () => {
                     }
                     error={errors?.password}
                 />
-                {/* {errors.password && <div style={{ color: 'red' }}>{errors.password}</div>} */}
 
                 <div className='flex items-center'>
                     <label>
