@@ -119,7 +119,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
   
   try {
     const post = await Post.findById(req.params.id);
-    // console.log(post.user.toString(),req.user.id);
+    console.log(post.user.toString(),req.user.userId);
     // if (post.user.toString() !== req.user.id) {
     //   console.log("Post Owner ID:", post.user.toString());
     //   console.log("Logged-in User ID:", req.user.id);
@@ -132,7 +132,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
     
     // Check if the logged-in user is the owner
-    if (post.user.toString() !== req.user.id) {
+    if (post.user.toString() !== req.user.userId) {
       return res
         .status(403)
         .json({ message: "Unauthorized to update this post" });
@@ -162,8 +162,8 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-
-    if (post.user.toString() !== req.user.id) {
+    
+    if (post.user.toString() !== req.user.userId) {
       return res
         .status(403)
         .json({ message: "Unauthorized to delete this post" });
@@ -183,7 +183,7 @@ router.put("/:id/like", authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
-    
+    console
     const userId = req.user.id;
     if (post.likes.includes(userId)) {
       post.likes = post.likes.filter((id) => id.toString() !== userId);
